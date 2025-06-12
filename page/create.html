@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header__center">
+            <img src="../img/logo.png" alt="Логотип" class="header__logo">
+        </div>
+        <button class="header__login-btn" onclick="window.location.href='vhod.html'">
+            <img src="../img/vhod.png" alt="Вход" class="header__login-icon">
+        </button>
+    </header>
+    <nav class="nav">
+        <button class="nav__btn" onclick="window.location.href='../index.html'">Главная</button>
+        <button class="nav__btn" onclick="window.location.href='kategorii.html'">Категории</button>
+        <button class="nav__btn" onclick="window.location.href='popular.html'">Популярное</button>
+        <button class="nav__btn active">Создать</button>
+    </nav>
+    <!-- Контент страницы Создать -->
+    <div class="create-bg">
+      <form class="create-form" id="quiz-create-form">
+        <h2 class="create-title">Создать новый квиз-вопрос</h2>
+        <label>
+          Категория:
+          <input type="text" class="create-category" id="create-category" placeholder="Например: Математика" required>
+        </label>
+        <label>
+          Вопрос:
+          <textarea class="create-question" placeholder="Напишите вопрос"></textarea>
+        </label>
+        <div class="create-answers">
+          <label>Варианты ответа (отметьте правильный):</label>
+          <div class="create-answer-row">
+            <input type="radio" name="correct-answer" class="create-answer-radio" value="0">
+            <input type="text" class="create-answer" placeholder="Вариант 1">
+          </div>
+          <div class="create-answer-row">
+            <input type="radio" name="correct-answer" class="create-answer-radio" value="1">
+            <input type="text" class="create-answer" placeholder="Вариант 2">
+          </div>
+          <div class="create-answer-row">
+            <input type="radio" name="correct-answer" class="create-answer-radio" value="2">
+            <input type="text" class="create-answer" placeholder="Вариант 3">
+          </div>
+          <div class="create-answer-row">
+            <input type="radio" name="correct-answer" class="create-answer-radio" value="3">
+            <input type="text" class="create-answer" placeholder="Вариант 4">
+          </div>
+        </div>
+        <button type="submit" class="create-submit-btn">Создать</button>
+      </form>
+    </div>
+    <script src="../js/create-validation.js"></script>
+    <footer class="footer">
+        <hr class="footer-line">
+        <div class="footer-content">
+            <div class="footer-logo-block">
+                <img src="../img/logo.png" alt="Логотип" class="footer-logo">
+            </div>
+            <div class="footer-links-block">
+                <div class="footer-title">Страницы</div>
+                <nav class="footer-nav">
+                    <a href="../index.html" class="footer-link">Главная</a>
+                    <a href="kategorii.html" class="footer-link">Категории</a>
+                    <a href="popular.html" class="footer-link">Популярное</a>
+                    <a href="create.html" class="footer-link">Создать</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

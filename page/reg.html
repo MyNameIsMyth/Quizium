@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Регистрация</title>
+  <link rel="stylesheet" href="../css/reg.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="form-wrapper">
+      <div class="image-side">
+        <img src="../img/фото.jpg" alt="Иллюстрация" />
+      </div>
+      <form class="form">
+        <h1 class="title">Регистрация</h1>
+
+        <input type="text" id="username" name="username" placeholder="Имя пользователя" required />
+        <input type="email" id="email" name="email" placeholder="Почта" required />
+        <input type="password" id="password" name="password" placeholder="Пароль" required />
+        <input type="password" id="confirm-password" name="confirm-password" placeholder="Повтор пароля" required />
+
+        <div class="checkbox-container">
+          <input type="checkbox" id="consent" name="consent" required />
+          <label for="consent" class="checkbox-label">Даю согласие на обработку данных</label>
+        </div>
+
+        <button type="submit">Зарегистрироваться</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

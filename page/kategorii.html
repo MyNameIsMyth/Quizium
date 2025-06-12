@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/index.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header__center">
+            <img src="../img/logo.png" alt="Логотип" class="header__logo">
+        </div>
+        <button class="header__login-btn" onclick="window.location.href='vhod.html'">
+            <img src="../img/vhod.png" alt="Вход" class="header__login-icon">
+        </button>
+    </header>
+    <nav class="nav">
+        <button class="nav__btn" onclick="window.location.href='../index.html'">Главная</button>
+        <button class="nav__btn active">Категории</button>
+        <button class="nav__btn" onclick="window.location.href='popular.html'">Популярное</button>
+        <button class="nav__btn" onclick="window.location.href='create.html'">Создать</button>
+    </nav>
+    <!-- Контент страницы Категории -->
+    <main>
+        <h1 class="kategorii-title">Категории</h1>
+        <section class="kategorii-list">
+            <div class="kategorii-card placeholder">Место для категории 1</div>
+            <div class="kategorii-card placeholder">Место для категории 2</div>
+            <div class="kategorii-card placeholder">Место для категории 3</div>
+            <div class="kategorii-card placeholder">Место для категории 4</div>
+            <div class="kategorii-card placeholder">Место для категории 5</div>
+            <div class="kategorii-card placeholder">Место для категории 6</div>
+        </section>
+    </main>
+    <footer class="footer">
+        <hr class="footer-line">
+        <div class="footer-content">
+            <div class="footer-logo-block">
+                <img src="../img/logo.png" alt="Логотип" class="footer-logo">
+            </div>
+            <div class="footer-links-block">
+                <div class="footer-title">Страницы</div>
+                <nav class="footer-nav">
+                    <a href="../index.html" class="footer-link">Главная</a>
+                    <a href="kategorii.html" class="footer-link">Категории</a>
+                    <a href="popular.html" class="footer-link">Популярное</a>
+                    <a href="create.html" class="footer-link">Создать</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

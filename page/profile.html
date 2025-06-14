@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header__center">
+            <img src="../img/logo.png" alt="Логотип" class="header__logo">
+        </div>
+        <button class="header__login-btn" onclick="window.location.href='vhod.html'">
+            <img src="../img/vhod.png" alt="Вход" class="header__login-icon">
+        </button>
+    </header>
+    
+    <nav class="nav">
+        <button class="nav__btn" onclick="window.location.href='../index.html'">Главная</button>
+        <button class="nav__btn" onclick="window.location.href='kategorii.html'">Категории</button>
+        <button class="nav__btn" onclick="window.location.href='popular.html'">Популярное</button>
+        <button class="nav__btn" onclick="window.location.href='create.html'">Создать</button>
+    </nav>
+
+    <main class="profile-main">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img src="../img/default-avatar.png" alt="Аватар пользователя" class="avatar-image">
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name">Имя пользователя</h1>
+                    <p class="profile-email">email@example.com</p>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Вопросов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Ответов</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">Рейтинг</span>
+                </div>
+            </div>
+            <div class="profile-content">
+                <h2 class="profile-section-title">Мои вопросы</h2>
+                <div class="questions-list">
+                    <div class="question-card placeholder">У вас пока нет вопросов</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <hr class="footer-line">
+        <div class="footer-content">
+            <div class="footer-logo-block">
+                <img src="../img/logo.png" alt="Логотип" class="footer-logo">
+            </div>
+            <div class="footer-links-block">
+                <div class="footer-title">Страницы</div>
+                <nav class="footer-nav">
+                    <a href="../index.html" class="footer-link">Главная</a>
+                    <a href="kategorii.html" class="footer-link">Категории</a>
+                    <a href="popular.html" class="footer-link">Популярное</a>
+                    <a href="create.html" class="footer-link">Создать</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

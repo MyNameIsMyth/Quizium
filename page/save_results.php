@@ -19,21 +19,30 @@ if (!$data) {
 }
 
 try {
+    // Проверяем, проходил ли пользователь уже эту категорию
+    $check_stmt = $pdo->prepare("SELECT COUNT(*) FROM QuizResults WHERE user_id = ? AND category_id = ?");
+    $check_stmt->execute([$_SESSION['user_id'], $data['category_id']]);
+    $already_passed = $check_stmt->fetchColumn() > 0;
+
+    // Если уже проходил, очки не начисляем
+    $score = $already_passed ? 0 : $data['score'];
+    $correct_answers = $already_passed ? 0 : $data['correct_answers'];
+    $total_questions = $already_passed ? 0 : $data['total_questions'];
+
     // Сохраняем результаты в базу данных
     $stmt = $pdo->prepare("
         INSERT INTO QuizResults (user_id, category_id, score, correct_answers, total_questions, created_at)
         VALUES (?, ?, ?, ?, ?, NOW())
     ");
-    
     $stmt->execute([
         $_SESSION['user_id'],
         $data['category_id'],
-        $data['score'],
-        $data['correct_answers'],
-        $data['total_questions']
+        $score,
+        $correct_answers,
+        $total_questions
     ]);
 
-    echo json_encode(['success' => true]);
+    echo json_encode(['success' => true, 'already_passed' => $already_passed]);
 } catch (PDOException $e) {
     error_log("Ошибка при сохранении результатов: " . $e->getMessage());
     http_response_code(500);

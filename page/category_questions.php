@@ -243,23 +243,32 @@ try {
                         <div class="question-text"><?php echo htmlspecialchars($question['quest']); ?></div>
                         <ul class="answers-list">
                             <?php
-                            // Создаем массив ответов в правильном порядке
+                            // Создаем массив всех ответов
                             $answers = [
-                                $question['first_wrong_answer'],
-                                $question['second_wrong_answer'],
-                                $question['third_wrong_answer'],
-                                $question['correct_answer']
+                                [
+                                    'text' => $question['first_wrong_answer'],
+                                    'is_correct' => false
+                                ],
+                                [
+                                    'text' => $question['second_wrong_answer'],
+                                    'is_correct' => false
+                                ],
+                                [
+                                    'text' => $question['third_wrong_answer'],
+                                    'is_correct' => false
+                                ],
+                                [
+                                    'text' => $question['correct_answer'],
+                                    'is_correct' => true
+                                ]
                             ];
-                            // Перемешиваем только неправильные ответы
-                            $wrong_answers = array_slice($answers, 0, 3);
-                            shuffle($wrong_answers);
-                            // Добавляем правильный ответ в конец
-                            $wrong_answers[] = $question['correct_answer'];
+                            // Перемешиваем все ответы
+                            shuffle($answers);
                             // Выводим ответы
-                            foreach ($wrong_answers as $answer):
+                            foreach ($answers as $answer):
                             ?>
-                                <li class="answer-item" data-answer="<?php echo htmlspecialchars($answer); ?>">
-                                    <?php echo htmlspecialchars($answer); ?>
+                                <li class="answer-item" data-answer="<?php echo htmlspecialchars($answer['text']); ?>" <?php if ($answer['is_correct']) echo 'data-correct="1"'; ?>>
+                                    <?php echo htmlspecialchars($answer['text']); ?>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -349,8 +358,7 @@ try {
             // Проверяем ответы
             questionCards.forEach(card => {
                 const selectedAnswer = selectedAnswers.get(card.dataset.questionId);
-                const correctAnswer = card.querySelector('.answer-item[data-answer="' + 
-                    card.querySelector('.answer-item:nth-child(4)').dataset.answer + '"]');
+                const correctAnswer = card.querySelector('.answer-item[data-correct="1"]');
                 
                 const selectedElement = card.querySelector(`[data-answer="${selectedAnswer}"]`);
                 
@@ -375,8 +383,7 @@ try {
             const resultDetails = document.getElementById('resultDetails');
             questionCards.forEach(card => {
                 const selectedAnswer = selectedAnswers.get(card.dataset.questionId);
-                const correctAnswer = card.querySelector('.answer-item[data-answer="' + 
-                    card.querySelector('.answer-item:nth-child(4)').dataset.answer + '"]').dataset.answer;
+                const correctAnswer = card.querySelector('.answer-item[data-correct="1"]').dataset.answer;
                 
                 const questionDiv = document.createElement('div');
                 questionDiv.className = `result-question ${selectedAnswer === correctAnswer ? 'correct' : 'incorrect'}`;

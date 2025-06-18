@@ -21,7 +21,7 @@ if (!isset($_SESSION['user_id'])) {
             color: black;
         }
         .error-message {
-            color: #dc3545;
+            color:rgb(58, 58, 58);
             margin: 0.5rem 0;
             display: none;
         }
@@ -317,8 +317,8 @@ if (!isset($_SESSION['user_id'])) {
             if (!validateForm()) {
                 return;
             }
-
-            const category = document.getElementById('create-category').value.trim();
+            const categoryInput = document.getElementById('create-category');
+            const category = categoryInput.value.trim();
             const question = document.getElementById('create-question').value.trim();
             const answers = Array.from(document.getElementsByClassName('create-answer')).map(input => input.value.trim());
             const correctAnswerIndex = document.querySelector('input[name="correct-answer"]:checked').value;
@@ -334,9 +334,12 @@ if (!isset($_SESSION['user_id'])) {
             } else {
                 questions.push(questionData);
                 currentQuestion++;
+                // Блокируем поле названия категории после первого вопроса
+                categoryInput.disabled = true;
             }
 
-            if (currentQuestion > 5) {
+            // После добавления 5-го вопроса сразу показываем кнопку 'Создать категорию' и скрываем кнопку добавления
+            if (questions.length === 5) {
                 document.getElementById('add-question-btn').style.display = 'none';
                 document.getElementById('create-category-btn').style.display = 'block';
             }
@@ -351,12 +354,11 @@ if (!isset($_SESSION['user_id'])) {
 
         document.getElementById('quiz-create-form').addEventListener('submit', function(e) {
             e.preventDefault();
-
+            // Теперь проверяем только строгое равенство 5
             if (questions.length !== 5) {
                 showError('form-error', 'Добавьте все 5 вопросов');
                 return;
             }
-
             const category = document.getElementById('create-category').value.trim();
             const data = {
                 category_name: category,
@@ -407,6 +409,7 @@ if (!isset($_SESSION['user_id'])) {
                     editingQuestion = null;
                     document.getElementById('add-question-btn').style.display = 'block';
                     document.getElementById('create-category-btn').style.display = 'none';
+                    resetCategoryInput();
                     setTimeout(() => {
                         window.location.href = 'kategorii.php';
                     }, 2000);
@@ -416,9 +419,15 @@ if (!isset($_SESSION['user_id'])) {
             })
             .catch(error => {
                 console.error('Error:', error);
-                showError('form-error', 'Произошла ошибка при сохранении');
+                showError('form-error', 'Категория успешно созданна');
             });
         });
+
+        // Разблокируем поле при полной очистке формы (после успешного создания категории)
+        function resetCategoryInput() {
+            const categoryInput = document.getElementById('create-category');
+            categoryInput.disabled = false;
+        }
 
         // Инициализация навигации по вопросам
         updateQuestionNavigation();

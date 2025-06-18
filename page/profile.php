@@ -12,15 +12,15 @@ $stmt = $pdo->prepare("SELECT * FROM Users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 
-// Получаем статистику пользователя (количество созданных вопросов)
-$questions_stmt = $pdo->prepare("SELECT COUNT(*) as question_count FROM Quiz WHERE user_id = ?");
+// Получаем статистику пользователя (количество созданных вопросов с существующей категорией)
+$questions_stmt = $pdo->prepare("SELECT COUNT(*) as question_count FROM Quiz q INNER JOIN Categories c ON q.category_id = c.id WHERE q.user_id = ?");
 $questions_stmt->execute([$_SESSION['user_id']]);
 $questions_count = $questions_stmt->fetch()['question_count'];
 
-// Получаем последние вопросы пользователя
-$recent_questions_stmt = $pdo->prepare("SELECT * FROM Quiz WHERE user_id = ? ORDER BY id DESC LIMIT 5");
-$recent_questions_stmt->execute([$_SESSION['user_id']]);
-$recent_questions = $recent_questions_stmt->fetchAll();
+// Получаем все вопросы пользователя, у которых категория существует
+$all_questions_stmt = $pdo->prepare("SELECT q.* FROM Quiz q INNER JOIN Categories c ON q.category_id = c.id WHERE q.user_id = ? ORDER BY q.id DESC");
+$all_questions_stmt->execute([$_SESSION['user_id']]);
+$all_questions = $all_questions_stmt->fetchAll();
 
 // Получаем категории пользователя
 $stmt = $pdo->prepare("
@@ -32,6 +32,22 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$user['id']]);
 $user_categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Получаем сумму очков пользователя по всем прохождениям (по существующим категориям)
+$points_stmt = $pdo->prepare("SELECT COALESCE(SUM(qr.score), 0) as total_points FROM QuizResults qr INNER JOIN Categories c ON qr.category_id = c.id WHERE qr.user_id = ?");
+$points_stmt->execute([$_SESSION['user_id']]);
+$total_points = $points_stmt->fetch()['total_points'];
+
+// Получаем список пройденных пользователем категорий (только существующие)
+$passed_categories_stmt = $pdo->prepare("
+    SELECT DISTINCT c.id, c.name
+    FROM QuizResults qr
+    INNER JOIN Categories c ON qr.category_id = c.id
+    WHERE qr.user_id = ?
+    ORDER BY c.name
+");
+$passed_categories_stmt->execute([$_SESSION['user_id']]);
+$passed_categories = $passed_categories_stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -41,6 +57,24 @@ $user_categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Профиль - <?= htmlspecialchars($user['login']) ?></title>
     <link rel="stylesheet" href="../css/index.css">
     <link rel="stylesheet" href="../css/profile.css">
+    <style>
+        .collapsible-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .collapsible-btn:focus {
+            outline: none;
+        }
+        .questions-list.collapsed {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -78,7 +112,7 @@ $user_categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <span class="stat-label">Вопросов</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value"><?= $user['points'] ?></span>
+                    <span class="stat-value"><?= $total_points ?></span>
                     <span class="stat-label">Очков</span>
                 </div>
                 <div class="stat-item">
@@ -88,25 +122,37 @@ $user_categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <div class="profile-content">
                 <h2 class="profile-section-title">Мои вопросы</h2>
-                <div class="questions-list">
-                    <?php if (count($recent_questions) > 0): ?>
-                        <?php foreach ($recent_questions as $question): ?>
+                <button class="collapsible-btn" id="toggleQuestionsBtn">Свернуть</button>
+                <div class="questions-list" id="questionsList">
+                    <?php if (count($all_questions) > 0): ?>
+                        <?php foreach ($all_questions as $question): ?>
                             <div class="question-card">
                                 <h3><?= htmlspecialchars($question['quest']) ?></h3>
                                 <p>Категория: 
                                     <?php 
                                         $cat_stmt = $pdo->prepare("SELECT name FROM Categories WHERE id = ?");
-                                        $cat_stmt->execute([$question['id']]);
+                                        $cat_stmt->execute([$question['category_id']]);
                                         $category = $cat_stmt->fetch();
                                         echo htmlspecialchars($category['name'] ?? 'Без категории');
                                     ?>
-                                    
                                 </p>
                                 <p>Очки: <?= $question['points'] ?></p>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <div class="question-card placeholder">У вас пока нет вопросов</div>
+                    <?php endif; ?>
+                </div>
+                <h2 class="profile-section-title">Пройденные категории</h2>
+                <div class="categories-list">
+                    <?php if (count($passed_categories) > 0): ?>
+                        <ul>
+                            <?php foreach ($passed_categories as $cat): ?>
+                                <li><?= htmlspecialchars($cat['name']) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <div class="question-card placeholder">Вы ещё не проходили ни одной категории</div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -130,5 +176,23 @@ $user_categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
     </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('toggleQuestionsBtn');
+        const questionsList = document.getElementById('questionsList');
+        let collapsed = false;
+        toggleBtn.addEventListener('click', function() {
+            collapsed = !collapsed;
+            if (collapsed) {
+                questionsList.classList.add('collapsed');
+                toggleBtn.textContent = 'Развернуть';
+            } else {
+                questionsList.classList.remove('collapsed');
+                toggleBtn.textContent = 'Свернуть';
+            }
+        });
+    });
+    </script>
 </body>
 </html>
